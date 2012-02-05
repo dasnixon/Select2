@@ -11,10 +11,10 @@ class Select2
       return x[0]
     else
       puts "low: #{low} ---- high: #{high} ---- #{t}"
-      print select_array
-      puts
-      qtemp = ((high - low + 1)/5).floor
+      puts "SELECT ARRAY: #{select_array}"
+      qtemp = ((high - low + 1).to_f/5.to_f).floor
       q = qtemp
+      puts "QTEMP: #{qtemp}"
       median_array = []
       a1, a2 = 0, 4
       q.times do
@@ -22,11 +22,12 @@ class Select2
         a1 += 5
         a2 += 5
       end
-      puts
-      print median_array
-      v = select2(median_array, (qtemp/2).ceil, 0, qtemp - 1)
+      puts "MEDIAN ARRAY: #{median_array}"
+      v = select2(median_array, ((qtemp-1).to_f/2.to_f).ceil, 0, qtemp - 1)
       partition = partition2(select_array, low, high, select_array.index(v))
       position = partition[0]
+      puts "Position #{position} and t: #{t}"
+      puts "Partition array: #{partition[1]}"
       if t == position
         x = select_array[position]
         puts "We found it: #{x}"
@@ -114,4 +115,4 @@ class Select2
   end
 end
 
-Select2.new.select2([12, 4, 35, 18, 36, 63, 37, 338, 9, 3, 11, 2, 133, 1, 10, 126, 17, 1888, 129, 2540, 213, 23, 12, 7, 252], 2, 0, 24)
+Select2.new.select2([12, 4, 35, 18, 36, 63, 37, 338, 2, 3, 11, 22, 133, 1, 10, 126, 17, 1888, 129, 2540, 213, 23, 12, 7, 252], 5, 0, 24)
