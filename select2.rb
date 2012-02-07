@@ -31,12 +31,12 @@ class Select2
           median_array << array_leftover
         else
           array_leftover = select_array[select_array.length-remainder..select_array.length-1].sort
-            if array_leftover.length % 2 == 0
-              median_array << array_leftover[array_leftover.length/2]
-            else
-              avg_median_value = array_leftover[((array_leftover.length+1)/2)-1]
-              median_array << avg_median_value
-            end
+          if array_leftover.length % 2 == 0
+            median_array << array_leftover[array_leftover.length/2]
+          else
+            avg_median_value = array_leftover[((array_leftover.length+1)/2)-1]
+            median_array << avg_median_value
+          end
         end
         puts "LEFTOVER: #{array_leftover}"
       end
@@ -81,7 +81,6 @@ class Select2
         select_array[moveright] = temp
       end
     end
-    puts "MIDSTPARTION: #{select_array}"
     position = moveleft
     return position, select_array
   end
@@ -139,6 +138,48 @@ class Select2
       end
     end
   end
+
+  #Validates the string is an integer from user input
+  def is_int?(string)
+    !!(string =~ /^[-+]?[0-9]+$/)
+  end
 end
 
-Select2.new.select2([12, 4, 35, 18, 36, 63, 37, 338, 2, 3, 7, 22, 55, 13, 15, 33, 14, 99, 1222, 1, 5], 12, 0, 20)
+  array = Array.new
+  while array[0].nil?
+  puts "Your array is currently empty. Time to fill up."
+  num = nil
+    while (num != "done")
+    puts "Please input element by element the array of your desire, starting with index 0 and must be an integer. The array should have at least one element. When finished building your array type 'done'"
+    num = gets.chomp
+    if num == "done"
+      puts "Final array: #{array}"
+      num = "done"
+    else
+      bool = Select2.new.is_int?(num)
+        while (bool == false)
+          puts "That was an invalid integer. Try again."
+          num = gets.chomp
+          bool = Select2.new.is_int?(num)
+        end
+        array << num.to_i
+        puts "Current array: #{array} with length: #{array.length}"
+        num = array.last
+      end
+    end
+  end
+
+  #This receives the input from the user for the input t in the Select2 code in the book
+  puts "Input a valid integer for the index to find the kth smallest element in the array, between 0 and #{array.length-1} for the array: #{array}"
+  num = gets.chomp
+  #Validate user input
+  bool = Select2.new.is_int?(num)
+  while ((bool == false) || (num.to_i < 0) || (num.to_i >= array.length))
+    puts "That was an invalid integer. Try again."
+    puts "Input an integer between 0 and #{array.length-1} for the list: #{array}"
+    num = gets.chomp
+    bool = Select2.new.is_int?(num)
+  end
+  index = num.to_i
+
+Select2.new.select2(array, index, 0, array.length-1)
