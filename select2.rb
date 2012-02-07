@@ -174,3 +174,32 @@ end
   index = num.to_i
 
 Select2.new.select2(array, index, 0, array.length-1)
+
+#After having run the program multiple times with various sizes of array and all
+#different types of values it seems that I have fully implemented the select2 algorithm. 
+#Some of the issues I ran into were building the median of medians list. When I set my q
+#to the high-low+1 /5 and to the floor I would forget to take into account that if there
+#was a remainder (a list not in a group of 5) I needed to increment my q since now the
+#median of medians array is of length now > my initial q. The program allows you to build
+#your own array element by element, type 'done' when finished building your array, and then
+#choose which index you want to find the kth smallest element, where the index must be
+#between low <= index <= high. If the array you built has <= 5 elements we just perform an adhoc method.
+#If the number of elements > 5 then we find the median of medians by breaking the array into
+#n-1/5 sublists where n is the length of the array and using the groups of 5 in the fast median
+#of five algorithm. For the elements not in a group of five, an adhoc method is used and that value is pushed
+#onto the median of medians list. After getting the median of medians list, recursion is used
+#to pass the median of medians list back through select2 in order to find the pseudomedian value,
+#which is the pivot variable that will be used for partition. Once we get the pivot we swap the
+#value that is located at the 'low' index with the value at the 'pivot' index in our array. Then pass the
+#newly modified array to partition. Partition then organizes are array based on the pivot. Elements
+#lower than the pivot value are placed to the left of the pivot while elements greater than
+#the pivot are placed to the right of the pivot. We then return the position of where the
+#moveleft stopped, or the index the pivot stopped at. Then by knowing what index we want we determine
+#on a case basis what to do. If the index inputted by the user is = to the position returned we
+#know we have the exact value, else if the position is greater than the inputted index we know
+#that the value that should be in that index is located from low to position - 1 then we make a
+#recursive call again to select2, and finally if the position is less than the index inputted we
+#know that the value at the index inputted should be located somewhere from position + 1 to
+#high and we make a recursive call again to select2. Then we continue the process with a smaller
+#input array, different low and different high and we eventually obtain our value for the smallest
+#element that should be located at the index provided by the user.
