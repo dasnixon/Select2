@@ -75,6 +75,9 @@ class Select2
       until select_array[moveleft] <= x do
         moveleft -= 1
       end
+      if select_array[moveright] == select_array[moveleft]
+        moveright += 1
+      end
       if moveright < moveleft
         temp = select_array[moveleft]
         select_array[moveleft] = select_array[moveright]
