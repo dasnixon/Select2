@@ -7,27 +7,27 @@ class Select2
   def select2(select_array, t, low, high)
     remainder = 0
     median_array = []
-    puts "low: #{low} ---- high: #{high} ---- #{t}"
+    puts "low: #{low} ---- high: #{high} ---- index: #{t}"
     puts "SELECT ARRAY: #{select_array}"
     if high - low + 1 <= 5
-      x = ad_hoc(select_array, t, low, high)
+      x = ad_hoc(select_array, t, low, high) #calls the ad_hoc method which gets the element at t-low in a sorted list
       puts "ADHOC: The value in the sorted array #{x[1]} at index #{t} is #{x[0]}."
       return x[0]
     end
     q = ((high - low + 1).to_f/5.to_f).floor
     a1, a2 = low, low+4
     q.times do
-      median_array << median_of_five(select_array[a1..a2])
+      median_array << median_of_five(select_array[a1..a2]) #calls the median_of_five method given to use by Dr. Ralescu implemented in ruby
       a1 += 5
       a2 += 5
     end
-    if ((high - low + 1) % 5) != 0
+    if ((high - low + 1) % 5) != 0 #if there are elements not in a group of five get the remainder then do an adhoc approach to get the median
       remainder = (high - low +1) % 5
       if remainder == 1
         median_array << select_array.last
       else
         array_leftover = select_array[select_array.length-remainder..select_array.length-1].sort
-        if array_leftover.length % 2 == 0
+        if array_leftover.length % 2 == 0 #checks for even amount of values
           median_array << array_leftover[array_leftover.length/2]
         else
           median_array << array_leftover[((array_leftover.length-1)/2)]
@@ -35,26 +35,24 @@ class Select2
       end
       q += 1 #necessary when we append the median from the overflow elements not in a group of 5
     end
-    puts "MEDIAN ARRAY: #{median_array}"
-    pivot = select2(median_array, (q-1)/2, 0, q-1)
-    puts "PIVOT: #{pivot}"
-    puts "INDEX OF PIVOT: #{select_array.index(pivot)}"
-    index_pivot = select_array.index(pivot)
-    temp = select_array[low]
+    puts "median of medians array: #{median_array}"
+    pivot = select2(median_array, (q-1)/2, 0, q-1) #make a recursive call to select2 in order to get the pseudomedian value
+    puts "Pivot value from median of medians: #{pivot}"
+    index_pivot = select_array.index(pivot) #get the index of the pivot element to be used
+    temp = select_array[low] #swap the value at the low index with the value at the pivot index
     select_array[low] = select_array[index_pivot]
     select_array[index_pivot] = temp
-    puts "Modified select array: #{select_array}"
-    partition = partition2(select_array, low, high)
+    partition = partition2(select_array, low, high) #call partition using the first element in the array (pivot value)
     position = partition[0]
-    puts "Position #{position} and t: #{t}"
+    puts "Position: #{position} and t: #{t}"
     puts "Partition array: #{partition[1]}"
     if t == position
       x = select_array[position]
-      puts "We found it: #{x}"
+      puts "The position from the parition is equal to your input of the index: The element at index #{t} is #{x}"
     elsif t < position
-      select2(select_array, t, low, position - 1)
+      select2(select_array, t, low, position - 1) #make a recursive call where the value we are looking for is in the portion of the array less than the pivot
     elsif t > position
-      select2(select_array, t, position + 1, high)
+      select2(select_array, t, position + 1, high) #make a recursive call where the value we are looking for is in the portion of the array higher than the pivot
     end
   end
 
@@ -69,7 +67,7 @@ class Select2
       until select_array[moveleft] <= x do
         moveleft -= 1
       end
-      if select_array[moveright] == select_array[moveleft]
+      if select_array[moveright] == select_array[moveleft] #in case of repeated elements continue to increment moveright
         moveright += 1
       end
       if moveright < moveleft
@@ -82,7 +80,7 @@ class Select2
     return position, select_array
   end
 
-  def median_of_five(five_array)
+  def median_of_five(five_array) #copied from matlab code give to us by Dr. Ralescu
     if five_array[0] < five_array[1]
       temp = five_array[1]
       five_array[1] = five_array[0]
