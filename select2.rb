@@ -5,26 +5,51 @@
 
 class Select2
   def select2(select_array, t, low, high)
+    puts "low: #{low} ---- high: #{high} ---- #{t}"
+    puts "SELECT ARRAY: #{select_array[low..high]}"
     if high - low + 1 <= 5
-      x = ad_hoc(select_array, t)
-      puts "The value in the sorted array #{x[1]} at index #{t} is #{x[0]}."
+      x = ad_hoc(select_array, t, low, high)
+      puts "ADHOC: The value in the sorted array #{x[1]} at index #{t} is #{x[0]}."
       return x[0]
     else
-      puts "low: #{low} ---- high: #{high} ---- #{t}"
-      puts "SELECT ARRAY: #{select_array}"
-      qtemp = ((high - low + 1).to_f/5.to_f).floor
-      q = qtemp
-      puts "QTEMP: #{qtemp}"
       median_array = []
-      a1, a2 = 0, 4
+      q = ((high - low + 1).to_f/5.to_f).floor
+      qtemp = q
+      a1, a2 = low, low+4
       q.times do
         median_array << median_of_five(select_array[a1..a2])
         a1 += 5
         a2 += 5
       end
+      avg_median_value = nil
+      remainder = 0
+      if ((high - low + 1) % 5) != 0
+        remainder = (high - low +1) % 5
+        puts "REMAINDER: #{remainder}"
+        if remainder == 1
+          array_leftover = select_array.last
+          median_array << array_leftover
+        else
+          array_leftover = select_array[select_array.length-remainder..select_array.length-1].sort
+            if array_leftover.length % 2 == 0
+              median_array << array_leftover[array_leftover.length/2]
+            else
+              avg_median_value = array_leftover[((array_leftover.length+1)/2)-1]
+              median_array << avg_median_value
+            end
+        end
+        puts "LEFTOVER: #{array_leftover}"
+      end
       puts "MEDIAN ARRAY: #{median_array}"
-      v = select2(median_array, ((qtemp-1).to_f/2.to_f).ceil, 0, qtemp - 1)
-      partition = partition2(select_array, low, high, select_array.index(v))
+      pivot = select2(median_array, (qtemp-1)/2, 0, qtemp - 1)
+      puts "PIVOT: #{pivot}"
+      puts "INDEX OF PIVOT: #{select_array.index(pivot)}"
+      index_pivot = select_array.index(pivot)
+      temp = select_array[low]
+      select_array[low] = select_array[index_pivot]
+      select_array[index_pivot] = temp
+      puts "Modified select array: #{select_array}"
+      partition = partition2(select_array, low, high)
       position = partition[0]
       puts "Position #{position} and t: #{t}"
       puts "Partition array: #{partition[1]}"
@@ -39,15 +64,15 @@ class Select2
     end
   end
 
-  def partition2(select_array, low, high, position)
+  def partition2(select_array, low, high)
     moveright = low
     moveleft = high
-    x = select_array[position]
+    x = select_array[low]
     while( moveright < moveleft ) do
-      until select_array[moveright] >= x
+      until select_array[moveright] >= x do
         moveright += 1
       end
-      until select_array[moveleft] <= x
+      until select_array[moveleft] <= x do
         moveleft -= 1
       end
       if moveright < moveleft
@@ -56,9 +81,8 @@ class Select2
         select_array[moveright] = temp
       end
     end
+    puts "MIDSTPARTION: #{select_array}"
     position = moveleft
-    select_array[low] = select_array[position]
-    select_array[position] = x
     return position, select_array
   end
 
@@ -104,15 +128,17 @@ class Select2
     return final
   end
 
-  def ad_hoc(select_array, t)
-    return select_array.sort[t], select_array.sort
-  end
-
-  #discusses the sort2dmesh function and the complexity
-  def discussion
-    puts "For the sorting a 2D mesh the W(n) = sqrt(n)*log(n) + sqrt(n). EvenOddRowSort (line 23) and\nEvenOddColumnSort (line 47) each perform sqrt(n) parallel comparison steps."
-    puts "The Sort2dMesh or in our case sort_mesh (line 7) function itself involes log_2_(n) + 1 steps.\nThis is how we get the worst case complexity as mentioned before."
+  def ad_hoc(select_array, t, low, high)
+    if high-low+1 == 5 && t <= 4
+      return select_array[low..high].sort[t], select_array[low..high].sort
+    else
+      if select_array[low..high].length % 2 != 0
+        return select_array[low..high].sort[t-low], select_array[low..high].sort
+      else
+        return select_array[low..high].sort[t-low], select_array[low..high].sort
+      end
+    end
   end
 end
 
-Select2.new.select2([12, 4, 35, 18, 36, 63, 37, 338, 2, 3, 11, 22, 133, 1, 10, 126, 17, 1888, 129, 2540, 213, 23, 12, 7, 252], 5, 0, 24)
+Select2.new.select2([12, 4, 35, 18, 36, 63, 37, 338, 2, 3, 7, 22, 55, 13, 15, 33, 14, 99, 1222, 1, 5], 12, 0, 20)
